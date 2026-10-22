@@ -3,6 +3,8 @@ include(GoogleTest)
 add_executable(ironbook_tests
   test_histogram.cpp
   test_parser.cpp
+  test_flat_hash_map.cpp
+  test_pool.cpp
   test_order_book.cpp
 )
 target_link_libraries(ironbook_tests PRIVATE ironbook GTest::gtest_main)

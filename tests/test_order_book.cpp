@@ -5,14 +5,23 @@
 #include <algorithm>
 #include <random>
 
+#include "ironbook/book/market.hpp"
 #include "ironbook/book/naive_market.hpp"
 
 using namespace ib;
 
 namespace {
+MarketConfig small_cfg() {
+  MarketConfig c;
+  c.max_orders = 1u << 16;
+  c.max_levels = 1u << 14;
+  c.expected_live_orders = 1u << 12;
+  return c;
+}
 template <class M>
 M make() {
-  return M{};
+  if constexpr (std::is_same_v<M, NaiveMarket>) return M{};
+  else return M{small_cfg()};
 }
 constexpr Locate L = 7;
 }  // namespace
@@ -23,7 +32,7 @@ class BookSemantics : public ::testing::Test {
   M m = make<M>();
   std::vector<LevelView> d;
 };
-using Markets = ::testing::Types<NaiveMarket>;
+using Markets = ::testing::Types<NaiveMarket, Market, BasicMarket<FlatHashMap<Murmur3Mix>>, BasicMarket<StdIndex>>;
 TYPED_TEST_SUITE(BookSemantics, Markets);
 
 TYPED_TEST(BookSemantics, EmptyBook) {
@@ -159,4 +168,49 @@ TYPED_TEST(BookSemantics, DeepLevelsBeyondLinearScanWindow) {
   for (OrderId k = 1; k < id; k += 4) EXPECT_EQ(m.remove(k), OpStatus::Ok);
   m.depth(L, Side::Buy, 1000, this->d);
   EXPECT_EQ(this->d.size(), 100u);
+}
+
+TEST(OptimizedBook, InvariantsHoldThroughChurn) {
+  Market m(small_cfg());
+  std::mt19937_64 rng(99);
+  std::vector<OrderId> live;
+  OrderId next = 1;
+  for (int i = 0; i < 20000; ++i) {
+    if (live.empty() || rng() % 3) {
+      const Side s = rng() % 2 ? Side::Buy : Side::Sell;
+      const Price p = s == Side::Buy ? 900 + rng() % 100 : 1001 + rng() % 100;
+      m.add(L, next, s, p, 1 + rng() % 500);
+      live.push_back(next++);
+    } else {
+      const std::size_t k = rng() % live.size();
+      const OrderId id = live[k];
+      if (rng() % 2) {
+        if (m.execute(id, 1 + rng() % 600) == OpStatus::Ok && m.find(id)) continue;
+      } else {
+        m.remove(id);
+      }
+      live[k] = live.back();
+      live.pop_back();
+    }
+    if (i % 500 == 0) ASSERT_TRUE(m.book(L).check_invariants()) << i;
+  }
+  EXPECT_TRUE(m.book(L).check_invariants());
+  EXPECT_EQ(m.pools().orders.live(), m.order_count());
+}
+
+// The block-vectorized scan + branchless binary search must equal std::upper_bound for
+// every ladder size (all scan/remainder/binary-search paths) and every query position.
+TEST(PriceLadder, UpperMatchesStdUpperBoundExhaustively) {
+  for (std::uint32_t size = 0; size <= 300; ++size) {
+    PriceLadder lad;
+    std::vector<std::uint32_t> keys;
+    for (std::uint32_t i = 0; i < size; ++i) {
+      keys.push_back(10 + 3 * i);
+      lad.insert_at(i, 10 + 3 * i, i + 1);
+    }
+    for (std::uint32_t q = 0; q < 10 + 3 * size + 5; ++q) {
+      const auto want = static_cast<std::size_t>(std::upper_bound(keys.begin(), keys.end(), q) - keys.begin());
+      ASSERT_EQ(lad.upper(q), want) << "size=" << size << " q=" << q;
+    }
+  }
 }
