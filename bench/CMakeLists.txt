@@ -1,0 +1,3 @@
+add_executable(ironbook_bench bench_main.cpp)
+target_link_libraries(ironbook_bench PRIVATE ironbook benchmark::benchmark_main)
+ironbook_configure_target(ironbook_bench)

@@ -39,11 +39,12 @@ include(Dependencies)
 
 # ---------------------------------------------------------------- core library
 add_library(ironbook
+  src/itch/file_reader.cpp
+  src/itch/symbols.cpp
   src/common/timing.cpp
   src/common/mapped_file.cpp
   src/common/histogram.cpp
-  src/itch/file_reader.cpp
-  src/itch/symbols.cpp
+  src/common/profiler.cpp
 )
 add_library(ironbook::ironbook ALIAS ironbook)
 target_include_directories(ironbook PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -51,7 +52,7 @@ target_link_libraries(ironbook PUBLIC Threads::Threads ZLIB::ZLIB)
 ironbook_configure_target(ironbook)
 
 # ---------------------------------------------------------------- executables
-foreach(app itch_replay itch_stats itch_slice)
+foreach(app itch_replay itch_stats itch_slice ib_bench engine_sim)
   add_executable(${app} apps/${app}.cpp)
   target_link_libraries(${app} PRIVATE ironbook)
   ironbook_configure_target(${app})
@@ -63,3 +64,6 @@ if(IRONBOOK_BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
+if(IRONBOOK_BUILD_BENCHMARKS)
+  add_subdirectory(bench)
+endif()
