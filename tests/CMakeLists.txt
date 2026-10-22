@@ -6,6 +6,7 @@ add_executable(ironbook_tests
   test_flat_hash_map.cpp
   test_pool.cpp
   test_order_book.cpp
+  test_market_differential.cpp
 )
 target_link_libraries(ironbook_tests PRIVATE ironbook GTest::gtest_main)
 ironbook_configure_target(ironbook_tests)
