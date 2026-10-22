@@ -8,7 +8,9 @@ add_executable(ironbook_tests
   test_order_book.cpp
   test_market_differential.cpp
   test_spsc.cpp
+  test_pipeline.cpp
   test_validation.cpp
+  test_real_data.cpp
 )
 target_link_libraries(ironbook_tests PRIVATE ironbook GTest::gtest_main)
 ironbook_configure_target(ironbook_tests)

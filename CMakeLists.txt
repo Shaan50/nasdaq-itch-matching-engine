@@ -51,7 +51,7 @@ target_link_libraries(ironbook PUBLIC Threads::Threads ZLIB::ZLIB)
 ironbook_configure_target(ironbook)
 
 # ---------------------------------------------------------------- executables
-foreach(app itch_stats itch_slice)
+foreach(app itch_replay itch_stats itch_slice)
   add_executable(${app} apps/${app}.cpp)
   target_link_libraries(${app} PRIVATE ironbook)
   ironbook_configure_target(${app})
