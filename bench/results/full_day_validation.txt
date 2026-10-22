@@ -1,0 +1,29 @@
+
+feed: adds=118631456 exec=5722824 exec_px=99917 cancel=2787676 delete=114360997 replace=21639067 trade=1218602 cross=17836
+integrity: unknown_order=0 duplicate_add=0 overfill=0
+
+replayed 268744780 messages (8.25 GB) in 31.53 s -> 8.52M msg/s, 117.3 ns/msg
+live orders at end: 0 (peak sampled: 1923856), order-index capacity 16777216, rehashes 0
+order pool high water: 1924078, level pool high water: 784060
+
+validation:
+  executions matched to a resting order : 5822741 (unknown 0, locate mismatch 0)
+  continuous 'E' executions checked     : 5683178
+    at best price level                 : 5683178 (100.0000%)
+    at head of FIFO queue               : 5672613 (99.8141%)
+    from an Order Replace: 6.07% of all checked, 0.00% of the non-head ones
+  'C' executions printable / non-print  : 91408 / 8509 (price != limit: 97660)
+  crossed-book checks (continuous)      : 136896897, crossed 10 (0.00001%), locked 0
+
+NASDAQ-executed volume: 971.02M shares across 7744 symbols. Top 10:
+  symbol           volume     trades       vwap        low       high
+  NIO            38291738      81869     3.7162     2.4300     4.8600
+  ONTX           24553474      30660     0.5365     0.4400     0.6900
+  SVRA            9963810      40563     3.9388     2.0800     6.2000
+  AMD             7891651      43115    45.3908    44.6600    46.3100
+  GDX             7877363      11346    29.3517    28.8700    29.5300
+  FCEL            7674871       9556     1.5297     1.3000     1.9900
+  SPY             7392032      48923   321.3694   320.5500   323.1500
+  AAPL            7330969      67689   290.0419   285.2300   292.6900
+  EEM             6847522       6126    44.8888    44.7150    45.1800
+  MSFT            6154797      40329   157.6945   156.7300   159.3000

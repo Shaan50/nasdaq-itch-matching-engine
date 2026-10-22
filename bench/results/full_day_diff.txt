@@ -1,0 +1,7 @@
+lockstep replay: 268744780 messages in 185.5 s, 264496253 top-of-book comparisons
+top-of-book mismatches: 0
+full-book digests: 14 checkpoints, 115580 book snapshots (23052111 resting orders) compared, 0 mismatches
+live orders: naive=0 optimized=0
+
+feed: adds=118631456 exec=5722824 exec_px=99917 cancel=2787676 delete=114360997 replace=21639067 trade=1218602 cross=17836
+integrity: unknown_order=0 duplicate_add=0 overfill=0
