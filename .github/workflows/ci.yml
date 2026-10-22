@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+        preset: [release, debug]
+        include:
+          - os: ubuntu-24.04
+            preset: tsan
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ninja-build clang-18 zlib1g-dev
+      - name: Install toolchain (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ninja
+      - name: Configure
+        env:
+          CC: ${{ runner.os == 'Linux' && 'clang-18' || 'clang' }}
+          CXX: ${{ runner.os == 'Linux' && 'clang++-18' || 'clang++' }}
+        # CI runners have heterogeneous CPUs; don't tune for the build host.
+        run: cmake --preset ${{ matrix.preset }} -DIRONBOOK_NATIVE=OFF
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }} --timeout 600
+      - name: Benchmarks smoke test
+        if: matrix.preset == 'release'
+        run: ./build/release/bench/ironbook_bench --benchmark_min_time=0.01s --benchmark_filter='Parse|Ladder|Histogram'
