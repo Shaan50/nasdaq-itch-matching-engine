@@ -1,0 +1,8 @@
+build/
+data/*
+!data/README.md
+*.prof
+*.dSYM/
+.DS_Store
+.cache/
+compile_commands.json

@@ -1,0 +1,53 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "displayName": "Release (-O3 -march=native)",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "release-lto",
+      "inherits": "base",
+      "displayName": "Release + LTO",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release", "IRONBOOK_LTO": "ON" }
+    },
+    {
+      "name": "profile",
+      "inherits": "base",
+      "displayName": "RelWithDebInfo for perf / sample flamegraphs",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
+    },
+    {
+      "name": "debug",
+      "inherits": "base",
+      "displayName": "Debug + ASan + UBSan",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "IRONBOOK_SANITIZE": "address;undefined" }
+    },
+    {
+      "name": "tsan",
+      "inherits": "base",
+      "displayName": "Debug + ThreadSanitizer",
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug", "IRONBOOK_SANITIZE": "thread" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "release", "configurePreset": "release" },
+    { "name": "release-lto", "configurePreset": "release-lto" },
+    { "name": "profile", "configurePreset": "profile" },
+    { "name": "debug", "configurePreset": "debug" },
+    { "name": "tsan", "configurePreset": "tsan" }
+  ],
+  "testPresets": [
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+    { "name": "debug", "configurePreset": "debug", "output": { "outputOnFailure": true } },
+    { "name": "tsan", "configurePreset": "tsan", "output": { "outputOnFailure": true } }
+  ]
+}
