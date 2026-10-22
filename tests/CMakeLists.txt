@@ -3,6 +3,7 @@ include(GoogleTest)
 add_executable(ironbook_tests
   test_histogram.cpp
   test_parser.cpp
+  test_order_book.cpp
 )
 target_link_libraries(ironbook_tests PRIVATE ironbook GTest::gtest_main)
 ironbook_configure_target(ironbook_tests)
