@@ -9,6 +9,7 @@ add_executable(ironbook_tests
   test_market_differential.cpp
   test_spsc.cpp
   test_pipeline.cpp
+  test_matching_engine.cpp
   test_validation.cpp
   test_real_data.cpp
 )
